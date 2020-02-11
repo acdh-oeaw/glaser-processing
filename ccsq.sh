@@ -24,9 +24,9 @@ i=1
 for entry in * ; do
   echo "********************************************"
   echo "creating ply for squeeze $i out of $count ($entry)"
-  mymeshlabserver -i $entry/AT-OeAW-BA-3-27-A-$entry.obj -o $entry/AT-OeAW-BA-3-27-A-$entry.ply  -m vc fq -s ../../../meshlab_scripts/texture2color.mlx
+  mymeshlabserver -i ${entry}/AT-OeAW-BA-3-27-A-${entry}.obj -o ${entry}/AT-OeAW-BA-3-27-A-${entry}.ply  -m vc fq -s ../../../meshlab_scripts/texture2color.mlx
   ((i++))
-  if [[ $i > $maxcount && $maxcount > 0 ]]; then
+  if [[ ${i} > ${maxcount} && ${maxcount} > 0 ]]; then
     break;
   fi
 done
@@ -38,7 +38,7 @@ for entry in * ; do
   echo "creating streamable for squeeze $i out of $count ($entry)"
   nxsbuild $entry/AT-OeAW-BA-3-27-A-$entry.ply -C
   ((i++))
-  if [[ $i > $maxcount && $maxcount > 0 ]]; then
+  if [[ ${i} > ${maxcount} && ${maxcount} > 0 ]]; then
     break;
   fi
 done
@@ -48,10 +48,10 @@ i=1
 for entry in * ; do
   echo "********************************************"
   echo "moving results to target $i out of $count ($entry)"
-  mv $entry/AT-OeAW-BA-3-27-A-$entry.nxs $processeddir/$now
-  mv $entry/AT-OeAW-BA-3-27-A-$entry.ply $processeddir/$now
+  mv ${entry}/AT-OeAW-BA-3-27-A-${entry}.nxs ${processeddir}/${now}
+  mv ${entry}/AT-OeAW-BA-3-27-A-${entry}.ply ${processeddir}/${now}
   ((i++))
-  if [[ $i > $maxcount && $maxcount > 0 ]]; then
+  if [[ ${i} > ${maxcount} && ${maxcount} > 0 ]]; then
     break;
   fi
 done
