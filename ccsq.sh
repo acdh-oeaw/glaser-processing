@@ -5,7 +5,7 @@
 #  + Stp 1: duplicate to \processed\{batchno} && move to \archive\{batchno}
 #  + Stp 2: convert texture to vertex color (mlx), save as ply
 #  + Stp 3: produce nxs streamable (nexus)
-#  + Stp 4: cleanup in raw/processed
+#  + Stp 4: cleanup/move results to dest
 
 origdir='/home/acdh_glaser/raw/old_project'
 processeddir='/home/acdh_glaser/processed'
@@ -43,7 +43,7 @@ for entry in * ; do
   fi
 done
 
-#  + Stp 3: produce nxs streamable (nexus)
+#  + Stp 4: cleanup/move results to dest
 i=1
 for entry in * ; do
   echo "********************************************"
