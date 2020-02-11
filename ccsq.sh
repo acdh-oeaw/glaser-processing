@@ -10,7 +10,7 @@
 origdir='/home/acdh_glaser/raw/old_project'
 processeddir='/home/acdh_glaser/processed'
 compresseddir='/home/acdh_glaser/compressed'
-maxcount=1
+maxcount=0
 
 now=`date +'%Y-%m-%d'`
 start=`date +'%s'`
@@ -50,6 +50,7 @@ for entry in * ; do
   echo "moving results to target $i out of $count ($entry)"
   mv ${entry}/AT-OeAW-BA-3-27-A-${entry}.nxs ${processeddir}/${now}
   mv ${entry}/AT-OeAW-BA-3-27-A-${entry}.ply ${processeddir}/${now}
+  cp ${entry}/AT-OeAW-BA-3-27-A-${entry}.tif ${processeddir}/${now}
   ((i++))
   if [[ ${i} > ${maxcount} && ${maxcount} > 0 ]]; then
     break;
