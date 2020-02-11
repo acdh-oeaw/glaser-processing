@@ -1,0 +1,15 @@
+<!DOCTYPE FilterScript>
+<FilterScript>
+ <filter name="Simplification: Quadric Edge Collapse Decimation (with texture)">
+  <Param tooltip="" type="RichInt" name="TargetFaceNum" value="509326" description="Target number of faces"/>
+  <Param tooltip="If non zero, this parameter specifies the desired final size of the mesh as a percentage of the initial mesh." type="RichFloat" name="TargetPerc" value="0" description="Percentage reduction (0..1)"/>
+  <Param tooltip="Quality threshold for penalizing bad shaped faces.&lt;br>The value is in the range [0..1]&#xa; 0 accept any kind of face (no penalties),&#xa; 0.5  penalize faces with quality &lt; 0.5, proportionally to their shape&#xa;" type="RichFloat" name="QualityThr" value="0.3" description="Quality threshold"/>
+  <Param tooltip="Additional weight for each extra Texture Coordinates for every (selected) vertex" type="RichFloat" name="Extratcoordw" value="1" description="Texture Weight"/>
+  <Param tooltip="The simplification process tries not to destroy mesh boundaries" type="RichBool" name="PreserveBoundary" value="false" description="Preserve Boundary of the mesh"/>
+  <Param tooltip="The importance of the boundary during simplification. Default (1.0) means that the boundary has the same importance of the rest. Values greater than 1.0 raise boundary importance and has the effect of removing less vertices on the border. Admitted range of values (0,+inf). " type="RichFloat" name="BoundaryWeight" value="1" description="Boundary Preserving Weight"/>
+  <Param tooltip="Each collapsed vertex is placed in the position minimizing the quadric error.&#xa; It can fail (creating bad spikes) in case of very flat areas. &#xa;If disabled edges are collapsed onto one of the two original vertices and the final mesh is composed by a subset of the original vertices. " type="RichBool" name="OptimalPlacement" value="true" description="Optimal position of simplified vertices"/>
+  <Param tooltip="Try to avoid face flipping effects and try to preserve the original orientation of the surface" type="RichBool" name="PreserveNormal" value="false" description="Preserve Normal"/>
+  <Param tooltip="Add additional simplification constraints that improves the quality of the simplification of the planar portion of the mesh." type="RichBool" name="PlanarQuadric" value="false" description="Planar Simplification"/>
+  <Param tooltip="The simplification is applied only to the selected set of faces.&#xa; Take care of the target number of faces!" type="RichBool" name="Selected" value="false" description="Simplify only selected faces"/>
+ </filter>
+</FilterScript>
