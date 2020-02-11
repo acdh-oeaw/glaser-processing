@@ -3,20 +3,14 @@
 ###############################################################################
 # Post Processing for Glaser Squeeze Scans
 #  + Stp 1: duplicate to \processed\{batchno} && move to \archive\{batchno}
-#  + Stp 2: postprocessing / smoothing (mlx)
-#  + Stp 3: produce analysis image by (mlx)
-#  + Stp 4: convert texture to vertex color (mlx)
-#  + Stp 5: produce temporary ply
-#  + Stp 6: produce nxs streamable (nexus)
-#  + Stp 7: produce metadata for adlib
-#  + Stp 8: cleanup in raw/processed
+#  + Stp 2: convert texture to vertex color (mlx), save as ply
+#  + Stp 3: produce nxs streamable (nexus)
+#  + Stp 4: cleanup in raw/processed
 
 origdir='/home/acdh_glaser/raw/old_project'
 processeddir='/home/acdh_glaser/processed'
 compresseddir='/home/acdh_glaser/compressed'
 maxcount=1
-
-echo "glaser processing"
 
 now=`date +'%Y-%m-%d'`
 start=`date +'%s'`
@@ -24,27 +18,35 @@ count=`find $origdir/* -maxdepth 0 -type d -print| wc -l`
 
 mkdir $processeddir/$now
 
- #  + Stp 1: duplicate to \processed\{batchno} && move to \archive\{batchno}
-cd $origdir
-i=1
-for entry in */ ; do
-    echo "*****************************************"
-    echo "copying squeeze $i out of $count (AT-OeAW-BA-3-27-A-$entry)"
-    cp -r $entry $processeddir/$now
-    ((i++))
-    if [[ $i > $maxcount && $maxcount > 0 ]]; then
-        break;
-    fi
-done
-
 #  + Stp 2: postprocessing / smoothing (mlx)
-cd $processeddir/$now
+cd $origdir
 i=1
 for entry in * ; do
   echo "********************************************"
-  echo "processing squeeze $i out of $count ($entry)"
-  mymeshlabserver -i $entry/AT-OeAW-BA-3-27-A-$entry.obj -o $entry/AT-OeAW-BA-3-27-A-$entry.ply  -m vc fq wt -s ../../../meshlab_scripts/texture2color.mlx
-  #nxsbuild ../../../../acdh_glaser/processed/2018-09-27/A54_04_r/AT-OeAW-BA-3-27-A-A54_04_r.ply -C
+  echo "creating ply for squeeze $i out of $count ($entry)"
+  mymeshlabserver -i $entry/AT-OeAW-BA-3-27-A-$entry.obj -o $entry/AT-OeAW-BA-3-27-A-$entry.ply  -m vc fq -s ../../../meshlab_scripts/texture2color.mlx
+  ((i++))
+  if [[ $i > $maxcount && $maxcount > 0 ]]; then
+    break;
+  fi
+done
+
+#  + Stp 3: produce nxs streamable (nexus)
+i=1
+for entry in * ; do
+  echo "********************************************"
+  echo "creating streamable for squeeze $i out of $count ($entry)"
+  nxsbuild $entry/AT-OeAW-BA-3-27-A-$entry.ply -C
+  ((i++))
+done
+
+#  + Stp 3: produce nxs streamable (nexus)
+i=1
+for entry in * ; do
+  echo "********************************************"
+  echo "moving results to target $i out of $count ($entry)"
+  mv $entry/AT-OeAW-BA-3-27-A-$entry.nxs $processeddir/$now
+  mv $entry/AT-OeAW-BA-3-27-A-$entry.ply $processeddir/$now
   ((i++))
 done
 

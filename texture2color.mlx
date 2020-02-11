@@ -1,4 +1,5 @@
 <!DOCTYPE FilterScript>
 <FilterScript>
  <filter name="Transfer Color: Texture to Vertex"/>
+
 </FilterScript>
