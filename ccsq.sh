@@ -38,6 +38,9 @@ for entry in * ; do
   echo "creating streamable for squeeze $i out of $count ($entry)"
   nxsbuild $entry/AT-OeAW-BA-3-27-A-$entry.ply -C
   ((i++))
+  if [[ $i > $maxcount && $maxcount > 0 ]]; then
+    break;
+  fi
 done
 
 #  + Stp 3: produce nxs streamable (nexus)
@@ -48,6 +51,9 @@ for entry in * ; do
   mv $entry/AT-OeAW-BA-3-27-A-$entry.nxs $processeddir/$now
   mv $entry/AT-OeAW-BA-3-27-A-$entry.ply $processeddir/$now
   ((i++))
+  if [[ $i > $maxcount && $maxcount > 0 ]]; then
+    break;
+  fi
 done
 
 
