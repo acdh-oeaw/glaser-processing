@@ -11,29 +11,34 @@
 #  + Stp 7: produce metadata for adlib
 #  + Stp 8: cleanup in raw/processed
 
-origdir = ''
-meshlabserverpath = ''
+origdir='/home/acdh_glaser/raw/old_project'
+processeddir='/home/acdh_glaser/processed'
+compresseddir='/home/acdh_glaser/compressed'
+maxcount=1
+
+echo "glaser processing"
 
 now=`date +'%Y-%m-%d'`
 start=`date +'%s'`
-count=`find /home/acdh_glaser/raw/* -maxdepth 0 -type d -print| wc -l`
-# # Xvfb :100
-# # export DISPLAY=:100.0
-#
-# mkdir /home/acdh_glaser/processed/$now
-#
-# #  + Stp 1: duplicate to \processed\{batchno} && move to \archive\{batchno}
-# cd /home/acdh_glaser/raw/
-# i=1
-# for entry in */ ; do
-#   echo "*****************************************"
-#   echo "copying squeeze $i out of $count (AT-OeAW-BA-3-27-A-$entry)"
-#   cp -r $entry /home/acdh_glaser/processed/$now
-#   ((i++))
-# done
+count=`find $origdir/* -maxdepth 0 -type d -print| wc -l`
+
+mkdir $processeddir/$now
+
+ #  + Stp 1: duplicate to \processed\{batchno} && move to \archive\{batchno}
+cd $origdir
+i=1
+for entry in */ ; do
+    echo "*****************************************"
+    echo "copying squeeze $i out of $count (AT-OeAW-BA-3-27-A-$entry)"
+    cp -r $entry $processeddir/$now
+    ((i++))
+    if [[ $i > $maxcount && $maxcount > 0 ]]; then
+        break;
+    fi
+done
 
 #  + Stp 2: postprocessing / smoothing (mlx)
-cd /home/acdh_glaser/processed/$now
+cd $processeddir/$now
 i=1
 for entry in * ; do
   echo "********************************************"
