@@ -7,10 +7,11 @@
 #  + Stp 3: produce nxs streamable (nexus)
 #  + Stp 4: cleanup/move results to dest
 
-origdir='/home/acdh_glaser/raw/old_project'
+origdir='/home/acdh_glaser/raw/2018-10-10'
 processeddir='/home/acdh_glaser/processed'
 compresseddir='/home/acdh_glaser/compressed'
-maxcount=0
+maxcount=5
+pcount=5
 
 now=`date +'%Y-%m-%d'`
 start=`date +'%s'`
@@ -33,14 +34,26 @@ done
 
 #  + Stp 3: produce nxs streamable (nexus)
 i=1
+q=0
+declare -a parallel
 for entry in * ; do
-  echo "********************************************"
-  echo "creating streamable for squeeze $i out of $count ($entry)"
-  nxsbuild $entry/AT-OeAW-BA-3-27-A-$entry.ply -C
-  ((i++))
-  if [[ ${i} > ${maxcount} && ${maxcount} > 0 ]]; then
-    break;
-  fi
+    parrallel[$q] = "nxsbuild $entry/AT-OeAW-BA-3-27-A-$entry.ply -C"
+    ((q++))
+    if [[ ${q} = ${pcount} ]]; then
+        for cmd in ${parallel}; do {
+          echo "Process \"$cmd\" started";
+          $cmd & pid=$!
+          PID_LIST+=" $pid";
+        } done
+        trap "kill $PID_LIST" SIGINT
+        echo "Parallel processes have started";
+        wait $PID_LIST
+        q=0
+    fi
+    ((i++))
+    if [[ ${i} > ${maxcount} && ${maxcount} > 0 ]]; then
+        break;
+    fi
 done
 
 #  + Stp 4: cleanup/move results to dest
