@@ -7,47 +7,56 @@
 #  + Stp 3: produce nxs streamable (nexus)
 #  + Stp 4: cleanup/move results to dest
 
-origdir='/home/acdh_glaser/raw/2018-10-10'
-processeddir='/home/acdh_glaser/processed'
+origdir='/home/acdh_glaser/raw/2019_11'
+processeddir='/home/acdh_glaser/processed/2019_11'
 compresseddir='/home/acdh_glaser/compressed'
-maxcount=5
-pcount=5
+maxcount=0
+pcount=9
 
 now=`date +'%Y-%m-%d'`
 start=`date +'%s'`
-count=`find $origdir/* -maxdepth 0 -type d -print| wc -l`
+count=`find ${origdir}/* -maxdepth 0 -type d -print| wc -l`
 
-mkdir $processeddir/$now
+mkdir ${processeddir}
 
+
+cd ${origdir}
 #  + Stp 2: postprocessing / smoothing (mlx)
-cd $origdir
 i=1
+q=0
 for entry in * ; do
-  echo "********************************************"
-  echo "creating ply for squeeze $i out of $count ($entry)"
-  mymeshlabserver -i ${entry}/AT-OeAW-BA-3-27-A-${entry}.obj -o ${entry}/AT-OeAW-BA-3-27-A-${entry}.ply  -m vc fq -s ../../../meshlab_scripts/texture2color.mlx
-  ((i++))
-  if [[ ${i} > ${maxcount} && ${maxcount} > 0 ]]; then
-    break;
-  fi
+    if [[ ${q} = 0 ]]; then
+        parallel="mymeshlabserver -i ${entry}/AT-OeAW-BA-3-27-A-${entry}.obj -o ${entry}/AT-OeAW-BA-3-27-A-${entry}.ply  -m vc fq -s ../../../meshlab_scripts/texture2color.mlx"
+    else
+        parallel+="& mymeshlabserver -i ${entry}/AT-OeAW-BA-3-27-A-${entry}.obj -o ${entry}/AT-OeAW-BA-3-27-A-${entry}.ply  -m vc fq -s ../../../meshlab_scripts/texture2color.mlx"
+    fi
+    ((q++))
+    if [[ ${q} = ${pcount} ]]; then
+        eval "${parallel}"
+        wait
+        parallel=""
+        q=0
+    fi
+    ((i++))
+    if [[ ${i} > ${maxcount} && ${maxcount} > 0 ]]; then
+        break;
+    fi
 done
 
 #  + Stp 3: produce nxs streamable (nexus)
 i=1
 q=0
-declare -a parallel
 for entry in * ; do
-    parrallel[$q] = "nxsbuild $entry/AT-OeAW-BA-3-27-A-$entry.ply -C"
+    if [[ ${q} = 0 ]]; then
+        parallel="nxsbuild $entry/AT-OeAW-BA-3-27-A-$entry.ply -C"
+    else
+        parallel+="& nxsbuild $entry/AT-OeAW-BA-3-27-A-$entry.ply -C"
+    fi
     ((q++))
     if [[ ${q} = ${pcount} ]]; then
-        for cmd in ${parallel}; do {
-          echo "Process \"$cmd\" started";
-          $cmd & pid=$!
-          PID_LIST+=" $pid";
-        } done
-        trap "kill $PID_LIST" SIGINT
-        echo "Parallel processes have started";
-        wait $PID_LIST
+        eval "${parallel}"
+        wait
+        parallel=""
         q=0
     fi
     ((i++))
@@ -61,14 +70,12 @@ i=1
 for entry in * ; do
   echo "********************************************"
   echo "moving results to target $i out of $count ($entry)"
-  mv ${entry}/AT-OeAW-BA-3-27-A-${entry}.nxs ${processeddir}/${now}
-  mv ${entry}/AT-OeAW-BA-3-27-A-${entry}.ply ${processeddir}/${now}
-  cp ${entry}/AT-OeAW-BA-3-27-A-${entry}.tif ${processeddir}/${now}
+  mv ${entry}/AT-OeAW-BA-3-27-A-${entry}.nxs ${processeddir}
+  mv ${entry}/AT-OeAW-BA-3-27-A-${entry}.ply ${processeddir}
+  cp ${entry}/AT-OeAW-BA-3-27-A-${entry}.tif ${processeddir}
   ((i++))
   if [[ ${i} > ${maxcount} && ${maxcount} > 0 ]]; then
     break;
   fi
 done
-
-
 finish=`date +'%s'`
