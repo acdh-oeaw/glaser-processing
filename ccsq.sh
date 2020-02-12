@@ -2,10 +2,9 @@
 
 ###############################################################################
 # Post Processing for Glaser Squeeze Scans
-#  + Stp 1: duplicate to \processed\{batchno} && move to \archive\{batchno}
-#  + Stp 2: convert texture to vertex color (mlx), save as ply
-#  + Stp 3: produce nxs streamable (nexus)
-#  + Stp 4: cleanup/move results to dest
+#  + Stp 1: convert texture to vertex color (mlx), save as ply
+#  + Stp 2: produce nxs streamable (nexus)
+#  + Stp 3: cleanup/move results to dest
 
 origdir='/home/acdh_glaser/raw/2019_11'
 processeddir='/home/acdh_glaser/processed/2019_11'
@@ -21,7 +20,7 @@ mkdir ${processeddir}
 
 
 cd ${origdir}
-#  + Stp 2: postprocessing / smoothing (mlx)
+#  + Stp 1: convert texture to vertex color (mlx), save as ply
 i=1
 q=0
 for entry in * ; do
@@ -43,7 +42,7 @@ for entry in * ; do
     fi
 done
 
-#  + Stp 3: produce nxs streamable (nexus)
+#  + Stp 2: produce nxs streamable (nexus)
 i=1
 q=0
 for entry in * ; do
@@ -65,7 +64,7 @@ for entry in * ; do
     fi
 done
 
-#  + Stp 4: cleanup/move results to dest
+#  + Stp 3: cleanup/move results to dest
 i=1
 for entry in * ; do
   echo "********************************************"
@@ -79,3 +78,5 @@ for entry in * ; do
   fi
 done
 finish=`date +'%s'`
+
+# TODO: logging
